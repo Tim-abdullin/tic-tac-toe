@@ -17,6 +17,13 @@ def print_board():
     print('_____________')
 
 
+def choose_mode():
+    mode = None
+    while mode not in ('1', '2'):
+        mode = input('\nВыберете режим игры:\n1) Человек - человек\n2) Человек - компьютер\nВведите номер режима: ')
+    return mode
+
+
 def choose_marker():
     global player1_marker, player2_marker
     while player1_marker not in ('X', 'O'):
@@ -55,6 +62,16 @@ def player_move():
                 board[move] = player2_marker
             break
 
+
+# версия с легким ботом (ставит свою метку рандомно)
+def computer_move():
+    global board
+    available_move = [i for i in range(9) if board[i] == ' ']
+    move = random.choice(available_move)
+    board[move] = player2_marker
+    print(f'Компьютер выбрал ячейку {move + 1}.')
+
+
 def check_win(board, player):
     # Проверяем горизонтальные, вертикальные и диагональные линии
     if(
@@ -90,11 +107,15 @@ def swich_player():
 
 def play():
     print('\nДОБРО ПОЖАЛОВАТЬ в игру крестики-нолики!')
+    mode = choose_mode()
     choose_marker()
     first_player()
     print_board()
     while True:
-        player_move()
+        if current_player == 'player_1' or (current_player == 'player_2' and mode == '1'):
+            player_move()
+        else:
+            computer_move()
 
         print_board()
         
@@ -102,7 +123,10 @@ def play():
             print('Игрок 1 победил!!!')
             break
         elif check_win(board, player2_marker):
-            print('Игрок 2 победил!!!')
+            if mode == '1':
+                print('Игрок 2 победил!!!')
+            else:
+                print('Компьютер победил!!!')
             break
         elif check_tie():
             print('Ничья')
