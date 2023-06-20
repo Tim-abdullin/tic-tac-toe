@@ -24,6 +24,13 @@ def choose_mode():
     return mode
 
 
+def choose_difficulty():
+    difficulty = None
+    while difficulty not in ('1', '2'):
+        difficulty = input('Выберете сложность игры:\n1) Легко\n2) Невыносимо сложно\nВведите сложность: ')
+    return difficulty
+
+
 def choose_marker():
     global player1_marker, player2_marker
     while player1_marker not in ('X', 'O'):
@@ -64,12 +71,44 @@ def player_move():
 
 
 # версия с легким ботом (ставит свою метку рандомно)
-def computer_move():
+def computer_move(difficalty):
     global board
-    available_move = [i for i in range(9) if board[i] == ' ']
-    move = random.choice(available_move)
+    if difficalty == '1':
+        available_moves = [i for i in range(9) if board[i] == ' ']
+        move = random.choice(available_moves)
+    else:
+        move = minimax(board, player2_marker)['position']
     board[move] = player2_marker
     print(f'Компьютер выбрал ячейку {move + 1}.')
+
+
+# Алгоритм выбора наилучшего хода в данный момент
+def minimax(new_board: list, player: str):
+    available_moves = [i for i in range(9) if board[i] == ' ']
+    if check_win(new_board, player1_marker):
+        return {'score': -1}
+    elif check_win(new_board, player2_marker):
+        return {'score': 1}
+    elif len(available_moves) == 0:
+        return {'score': 0}
+    
+    moves = []
+    for move in available_moves:
+        new_board[move] = player
+        if player == player2_marker:
+            result = minimax(new_board, player1_marker)
+            moves.append({'position': move, 'score': result['score']})
+        else:
+            result = minimax(new_board, player2_marker)
+            moves.append({'position': move, 'score': result['score']})
+        new_board[move] = ' '
+
+    if player == player2_marker:
+        best_move = max(moves, key=lambda x: x['score'])
+    else:
+        best_move = min(moves, key=lambda x: x['score'])
+
+    return best_move
 
 
 def check_win(board, player):
@@ -109,13 +148,15 @@ def play():
     print('\nДОБРО ПОЖАЛОВАТЬ в игру крестики-нолики!')
     mode = choose_mode()
     choose_marker()
+    if mode == '2':
+        difficulty = choose_difficulty()
     first_player()
     print_board()
     while True:
         if current_player == 'player_1' or (current_player == 'player_2' and mode == '1'):
             player_move()
         else:
-            computer_move()
+            computer_move(difficulty)
 
         print_board()
         
