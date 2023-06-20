@@ -54,3 +54,35 @@ def player_move():
             else:
                 board[move] = player2_marker
             break
+
+def check_win(board, player):
+    # Проверяем горизонтальные, вертикальные и диагональные линии
+    if(
+        (board[0] == board[1] == board[2] == player) or
+        (board[3] == board[4] == board[5] == player) or
+        (board[6] == board[7] == board[8] == player) or
+        (board[0] == board[3] == board[6] == player) or
+        (board[1] == board[4] == board[7] == player) or
+        (board[2] == board[5] == board[8] == player) or
+        (board[0] == board[4] == board[8] == player) or
+        (board[2] == board[4] == board[6] == player)
+    ):
+        return True
+    return False
+
+
+player1_marker = 'X'
+player2_marker = 'O'
+first_player()
+print_board()
+while True:
+    player_move()
+
+    print_board()
+    
+    if check_win(board, player1_marker):
+        print('Игрок 1 победил!!!')
+        break
+    elif check_win(board, player2_marker):
+        print('Игрок 2 победил!!!')
+        break
