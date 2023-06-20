@@ -71,18 +71,44 @@ def check_win(board, player):
     return False
 
 
-player1_marker = 'X'
-player2_marker = 'O'
-first_player()
-print_board()
-while True:
-    player_move()
+# функция проверки ничьей
+def check_tie():
+    global board
+    if ' ' not in board:
+        return True
+    return False
 
+
+# функция смены текущего игрока
+def swich_player():
+    global current_player
+    if current_player == 'player_1':
+        current_player = 'player_2'
+    else:
+        current_player = 'player_1'
+
+
+def play():
+    print('\nДОБРО ПОЖАЛОВАТЬ в игру крестики-нолики!')
+    choose_marker()
+    first_player()
     print_board()
-    
-    if check_win(board, player1_marker):
-        print('Игрок 1 победил!!!')
-        break
-    elif check_win(board, player2_marker):
-        print('Игрок 2 победил!!!')
-        break
+    while True:
+        player_move()
+
+        print_board()
+        
+        if check_win(board, player1_marker):
+            print('Игрок 1 победил!!!')
+            break
+        elif check_win(board, player2_marker):
+            print('Игрок 2 победил!!!')
+            break
+        elif check_tie():
+            print('Ничья')
+            break
+        else:
+            swich_player()
+
+
+play()
